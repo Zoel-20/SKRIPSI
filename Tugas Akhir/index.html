@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOCSYS</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <nav class="bottombar">
+    <a href="index.html" class="nav-item active">
+      <span class="nav-icon" style="-webkit-mask-image: url('assets/home.svg'); mask-image: url('assets/home.svg');"></span>
+      <span>Home</span>
+    </a>
+    
+    <a href="control.html" class="nav-item">
+      <span class="nav-icon" style="-webkit-mask-image: url('assets/control.svg'); mask-image: url('assets/control.svg');"></span>
+      <span>Control</span>
+    </a>
+    
+    <a href="reports.html" class="nav-item">
+      <span class="nav-icon" style="-webkit-mask-image: url('assets/reports.svg'); mask-image: url('assets/reports.svg');"></span>
+      <span>Reports</span>
+    </a>
+    
+    <a href="profile.html" class="nav-item">
+      <span class="nav-icon" style="-webkit-mask-image: url('assets/profile.svg'); mask-image: url('assets/profile.svg');"></span>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <div class="container">
+    <div class="header">
+      <h1 id="greeting-text" class="greetings-style">Loading...</h1>
+      <img src="assets/UNJ.png" alt="logo-unj" class="logo"/>
+    </div>
+
+    <div class="monitoring-card">
+      <div class="card">
+        <h2 class="label">Temperature</h2>
+        <div class="value-icon">
+          <p id="temperature" class="card-value">Loading...</p>
+          <span class="icon-card-mask" style="-webkit-mask-image: url('assets/thermometer.svg'); mask-image: url('assets/thermometer.svg');"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="label">Humidity</h2>
+        <div class="value-icon">
+          <p id="humidity" class="card-value">Loading...</p>
+          <span class="icon-card-mask" style="-webkit-mask-image: url('assets/droplets.svg'); mask-image: url('assets/droplets.svg');"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grafik-home">
+      <div class="chart">
+          <div class="header-chart">
+            <h2 class="label-chart">Temperature Chart</h2>
+          </div>
+        <div class="chart-content">
+          <canvas id="tempChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart">
+          <div class="header-chart">
+            <h2 class="label-chart">Humidity Chart</h2>
+          </div>
+        <div class="chart-content">
+          <canvas id="humChart"></canvas>
+        </div>
+      </div>
+    </div>    
+  </div>
+  <!-- Firebase App (wajib) -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+
+  <!-- Firebase Realtime Database -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+
+  <script src="main.js"></script> 
+</body>
+</html>

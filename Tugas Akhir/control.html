@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOCSYS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="bottombar">
+    <a href="index.html" class="nav-item">
+      <span class="nav-icon" style="-webkit-mask-image: url('assets/home.svg'); mask-image: url('assets/home.svg');"></span>
+      <span>Home</span>
+    </a>
+    <a href="control.html" class="nav-item active">
+      <span class="nav-icon" style="-webkit-mask-image: url('assets/control.svg'); mask-image: url('assets/control.svg');"></span>
+      <span>Control</span>
+    </a>
+    <a href="reports.html" class="nav-item">
+      <span class="nav-icon" style="-webkit-mask-image: url('assets/reports.svg'); mask-image: url('assets/reports.svg');"></span>
+      <span>Reports</span>
+    </a>
+    <a href="profile.html" class="nav-item">
+      <span class="nav-icon" style="-webkit-mask-image: url('assets/profile.svg'); mask-image: url('assets/profile.svg');"></span>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <div class="control-container">
+    <div class="control-card">
+      <h2 class="header-control">SETPOINT CONTROL</h2>
+      <h4 class="caption-header">Adjust Precision Temperature and Humidity Parameters</h4>
+
+      <div class="main-control-card">
+        <h3 class="text-setpoint">TEMPERATURE SETPOINT</h3>
+        <div class="display-setpoint">
+          <span id="temp-value">2</span><span class="unit">°C</span>
+        </div>
+      </div>
+
+      <div class="slider-temp">
+        <div class="label-slider">
+          <span>2°C</span><span>5°C</span><span>8°C</span>
+        </div>
+        <input type="range" id="range-temp" min="2" max="8" value="2">
+      </div>
+
+      <div class="main-control-hmdty">
+        <h3 class="text-setpoint-hmdty">HUMIDITY SETPOINT</h3>
+        <div class="display-hmdty">
+          <span id="hmdty-value">30</span><span class="unit">%</span>
+        </div>
+      </div>
+
+      <div class="slider-hmdty">
+        <div class="label-hmdty">
+          <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
+        </div>
+        <input type="range" id="range-hmdty" min="0" max="100" value="30">
+      </div>
+
+      <button class="item-apply" id="apply-btn" onclick="setApplySetpoint()">APPLY SETPOINT</button>
+    </div>
+  </div>
+
+  <!-- Firebase Realtime Database (sama kayak index.html, BUKAN Firestore) -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+
+  <script src="control.js"></script>  <!-- ← file terpisah, bukan main.js -->
+</body>
+</html>
