@@ -10,39 +10,47 @@ const firebaseConfig = {
   measurementId: "G-HLJHB94MH7"
 };
 
-firebase.initializeApp(firebaseConfig);
+// ← BARU: cegah error kalau firebase sudah diinit di file lain
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 const db = firebase.database();
 
 // ── Chart Instances ───────────────────────────────────────────
 let reporttempChart = null;
 let reporthumChart  = null;
 
-// ── Listener Firebase ─────────────────────────────────────────
-db.ref('sensor/readings').on('value', (snapshot) => {
-  const raw = snapshot.val();
-  if (!raw) return;
+// ── Login Anonim dulu, baru dengerin Firebase ─────────────────
+firebase.auth().signInAnonymously()        // ← BARU
+  .then(() => {                            // ← BARU
+    console.log("Auth OK, mulai baca data report");
+    startListening();                      // ← BARU
+  })
+  .catch((err) => {                        // ← BARU
+    console.error("Auth gagal:", err);     // ← BARU
+  });                                      // ← BARU
 
-  // Ambil 10 data terakhir
-  const dataArray = Object.values(raw).slice(-10);
+// ── Listener dipindah ke dalam fungsi ────────────────────────
+function startListening() {               // ← BARU
+  db.ref('sensor/readings').on('value', (snapshot) => {
+    const raw = snapshot.val();
+    if (!raw) return;
 
-  // ✅ Dihapus: baris getElementById('temperature') & getElementById('humidity')
-  //    karena elemen itu ga ada di HTML
+    const dataArray = Object.values(raw).slice(-10);
 
-  const labels = dataArray.map(d => d.time);
-  const suhu   = dataArray.map(d => d.suhu);
-  const hum    = dataArray.map(d => d.kelembaban);
+    const labels = dataArray.map(d => d.time);
+    const suhu   = dataArray.map(d => d.suhu);
+    const hum    = dataArray.map(d => d.kelembaban);
 
-  updateCharts(labels, suhu, hum);
-});
+    updateCharts(labels, suhu, hum);
+  });
+}                                         // ← BARU
 
 // ── Fungsi Update Grafik ──────────────────────────────────────
 function updateCharts(labels, suhu, hum) {
-
-  // Destroy dulu sebelum bikin baru
   if (reporttempChart) reporttempChart.destroy();
   if (reporthumChart)  reporthumChart.destroy();
 
-  // Grafik Suhu
   reporttempChart = new Chart(document.getElementById('reporttempChart'), {
     type: 'line',
     data: {
@@ -68,7 +76,6 @@ function updateCharts(labels, suhu, hum) {
     }
   });
 
-  // Grafik Kelembaban
   reporthumChart = new Chart(document.getElementById('reporthumChart'), {
     type: 'line',
     data: {
