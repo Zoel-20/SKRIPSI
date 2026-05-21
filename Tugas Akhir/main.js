@@ -13,6 +13,10 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// ── Chart Instances ───────────────────────────────────────────
+let tempChart = null;
+let humChart  = null;
+
 // ── Greeting ──────────────────────────────────────────────────
 function updateGreeting() {
   const hours = new Date().getHours();
@@ -27,37 +31,41 @@ function updateGreeting() {
   if (el) el.textContent = greeting;
 }
 
-// ── Chart Instances (disimpan biar bisa di-destroy sebelum update) ──
-let tempChart = null;
-let humChart  = null;
+// ── Login Anonim dulu, baru dengerin Firebase ─────────────────
+firebase.auth().signInAnonymously()        // ← BARU
+  .then(() => {                            // ← BARU
+    console.log("Auth OK, mulai baca data");
+    startListening();                      // ← BARU
+  })
+  .catch((err) => {                        // ← BARU
+    console.error("Auth gagal:", err);     // ← BARU
+  });                                      // ← BARU
 
-// ── Dengerin Firebase — 1 listener aja ───────────────────────
-db.ref('sensor/readings').on('value', (snapshot) => {
-  const raw = snapshot.val();
-  if (!raw) return;
+// ── Listener dipindah ke dalam fungsi ────────────────────────
+function startListening() {               // ← BARU
+  db.ref('sensor/readings').on('value', (snapshot) => {
+    const raw = snapshot.val();
+    if (!raw) return;
 
-  // Ambil semua data, tapi slice 10 terakhir aja
-  const dataArray = Object.values(raw).slice(-10); // ← ini aja yang ditambahin
+    const dataArray = Object.values(raw).slice(-10);
+    const latest    = dataArray[dataArray.length - 1];
 
-  const latest = dataArray[dataArray.length - 1];
-  document.getElementById('temperature').innerText = latest.suhu.toFixed(1) + ' °C';
-  document.getElementById('humidity').innerText    = latest.kelembaban.toFixed(1) + ' %';
+    document.getElementById('temperature').innerText = latest.suhu.toFixed(1) + ' °C';
+    document.getElementById('humidity').innerText    = latest.kelembaban.toFixed(1) + ' %';
 
-  const labels = dataArray.map(d => d.time);
-  const suhu   = dataArray.map(d => d.suhu);
-  const hum    = dataArray.map(d => d.kelembaban);
+    const labels = dataArray.map(d => d.time);
+    const suhu   = dataArray.map(d => d.suhu);
+    const hum    = dataArray.map(d => d.kelembaban);
 
-  updateCharts(labels, suhu, hum);
-});
+    updateCharts(labels, suhu, hum);
+  });
+}                                         // ← BARU
 
 // ── Fungsi Bikin/Update Grafik ────────────────────────────────
 function updateCharts(labels, suhu, hum) {
-
-  // Destroy dulu sebelum bikin baru (wajib, biar ga error)
   if (tempChart) tempChart.destroy();
   if (humChart)  humChart.destroy();
 
-  // Grafik Suhu
   tempChart = new Chart(document.getElementById('tempChart'), {
     type: 'line',
     data: {
@@ -74,7 +82,7 @@ function updateCharts(labels, suhu, hum) {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false, // ← wajib biar grafik ngikutin tinggi CSS
+      maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
         y: { title: { display: true, text: '°C' } },
@@ -83,7 +91,6 @@ function updateCharts(labels, suhu, hum) {
     }
   });
 
-  // Grafik Kelembaban
   humChart = new Chart(document.getElementById('humChart'), {
     type: 'line',
     data: {
@@ -109,6 +116,7 @@ function updateCharts(labels, suhu, hum) {
     }
   });
 }
+
 // ── Init ──────────────────────────────────────────────────────
 window.onload = () => {
   updateGreeting();
